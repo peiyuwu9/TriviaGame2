@@ -34,10 +34,6 @@ h1 {
     cursor: pointer;
 }
 
-#question-display {
-    text-align: left;
-}
-
 input {
     display: none;
 }
@@ -53,4 +49,9 @@ label:hover {
     background: black;
     color: white;
     cursor: pointer;
+}
+
+iframe {
+    z-index: 5;
+    opacity: 1;
 }
