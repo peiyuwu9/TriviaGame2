@@ -2,24 +2,29 @@
 var correct = 0;
 var incorrect = 0;
 var unanswer = 0;
-var time = 10;
-var i = 0;
+var timeRemain = 10;
+var timeout = 0;
+var questionCount = 0;
 
 //Count down 10 seconds and display as 00:00 format
 var timeInterval;
 function timer() {
-    timeInterval = setInterval(count,1000);
+    clearInterval(timeInterval);
+    if (questionCount<10){
+        timeInterval = setInterval(count,1000);
+    }
 }
 function count() {
-    time --;
-    $("#timer-display").text("Time Remain 00:0" + time);
+    timeRemain--;
+    if (timeRemain >= 0)
+        $("#timer-display").text("Time Remain 00:0" + timeRemain)
+    else {
+        questionCount++;
+        timeRemain = 10;
+        unanswer++;
+        nextQuestion();
+    }
 }
-
-// //Reset timer
-// function restTimer() {
-//     time = 10;
-//     clearInterval();
-// }
 
 //Save questions as an object
 var questions = [
@@ -37,19 +42,20 @@ var questions = [
 
 //Function to pop question
 function questionPop() {
-    if (i<10) {
-        time = 10;
+    console.log("questionPoP");
+    if (questionCount<10) {
+        timeRemain = 10;
         $("#question-display").html("");
         var questionPrint = $("<div>");
-        questionPrint.text(questions[i].question);
+        questionPrint.text(questions[questionCount].question);
         $("#question-display").append(questionPrint);
-        for (var j=0; j<questions[i].choices.length; j++) {
+        for (var j=0; j<questions[questionCount].choices.length; j++) {
             var answerInput = $("<input>");
-            answerInput.attr("type","radio").attr("class","answerBtn").attr("name","answers").attr("value",questions[i].choices[j]).attr("id",questions[i].choices[j]);
+            answerInput.attr("type","radio").attr("class","answerBtn").attr("name","answers").attr("value",questions[questionCount].choices[j]).attr("id",questions[questionCount].choices[j]);
 
             var answerLabel = $("<label>");
-            answerLabel.attr("for",questions[i].choices[j]);
-            answerLabel.text(questions[i].choices[j]);
+            answerLabel.attr("for",questions[questionCount].choices[j]);
+            answerLabel.text(questions[questionCount].choices[j]);
             answerInput.append(answerLabel)
             $("#question-display").append(answerInput).append(" ").append(answerLabel).append("<br>");
         }
@@ -59,29 +65,29 @@ function questionPop() {
             $("#timer-display").text("Time Remain: 00:00");
             clearInterval(timeInterval);
             pushAnswer();
-            console.log(questions[i].userAnswer);
-            console.log(questions[i].userAnswer === questions[i].correctAnswer);
+            console.log(questions[questionCount].userAnswer);
+            console.log(questions[questionCount].userAnswer === questions[questionCount].correctAnswer);
             
-            if (questions[i].userAnswer === questions[i].correctAnswer) {
+            if (questions[questionCount].userAnswer === questions[questionCount].correctAnswer) {
                 var gifText = $("<div>");
                 gifText.text("You are correct!");
                 var gifImage = $("<iframe>");
-                gifImage.attr("src",questions[i].gifURL).attr("width","320").attr("height","180");
+                gifImage.attr("src",questions[questionCount].gifURL).attr("width","320").attr("height","180");
                 $("#question-display").append(gifText).append(gifImage);
             }
             else {
                 var gifText2 = $("<div>");
                 gifText2.text("You are NOT correct!");
                 var gifImage2 = $("<iframe>");
-                gifImage2.attr("src",questions[i].gifURL).attr("width","320").attr("height","180");
+                gifImage2.attr("src",questions[questionCount].gifURL).attr("width","320").attr("height","180");
                 $("#question-display").append(gifText2).append(gifImage2);
             }
-            i++;
-            console.log(i);
-            console.log(time);
+            questionCount++;
+            console.log(questionCount);
+            console.log(timeRemain);
             
-
-            setTimeout(nextQuestion,3000);
+            clearTimeout(timeout);
+            timeout = setTimeout(nextQuestion,3000);
             
         });
 
@@ -89,12 +95,14 @@ function questionPop() {
     // Once players submit all 10 questions, result will be retured.
     else {
         resultPrint();
+        // clearTimeout(timeout);
+        clearInterval(timeInterval);
     }
 }
 
 //Once player select, return answers back to question array for resultcheck function
 function pushAnswer() {
-    questions[i].userAnswer = $("input[name=answers]:checked").attr("value");
+    questions[questionCount].userAnswer = $("input[name=answers]:checked").attr("value");
 }
 
 //Function to check result
@@ -114,26 +122,25 @@ function resultChecker() {
 
 //Function to print result
 function resultPrint() {
-resultChecker();
-$("#timer-display").attr("style","display: none");
-var resultPrint = $("<h2>");
-resultPrint.text("Submitted");
-$("#question-display").html(resultPrint);
-var resultPrint = $("<div>");
-resultPrint.text("You got " + correct + " questions CORRECT");
-$("#question-display").append(resultPrint);
-var resultPrint = $("<div>");
-resultPrint.text("You got " + incorrect + " questions INCORRECT");
-$("#question-display").append(resultPrint);
-var resultPrint = $("<div>");
-resultPrint.text("You got " + unanswer + " questions UNANSWERED");
-$("#question-display").append(resultPrint);
+    resultChecker();
+    $("#timer-display").attr("style","display: none");
+    var resultPrint = $("<h2>");
+    resultPrint.text("Submitted");
+    $("#question-display").html(resultPrint);
+    var resultPrint = $("<div>");
+    resultPrint.text("You got " + correct + " questions CORRECT");
+    $("#question-display").append(resultPrint);
+    var resultPrint = $("<div>");
+    resultPrint.text("You got " + incorrect + " questions INCORRECT");
+    $("#question-display").append(resultPrint);
+    var resultPrint = $("<div>");
+    resultPrint.text("You got " + unanswer + " questions UNANSWERED");
+    $("#question-display").append(resultPrint);
 }
 
 //Set a next question function.
 function nextQuestion (){
     $("#timer-display").text("Time Remain: 00:10");
-    clearInterval(timeInterval);
     questionPop();
     timer();
 }
@@ -146,9 +153,5 @@ $("#start").on("click", function(){
     $("#timer-display").text("Time Remain: 00:10");
     questionPop();
     timer();
-
-    // if (time = 0){
-    //     nextQuestion();
-    // }
 
 });
