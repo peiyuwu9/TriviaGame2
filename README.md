@@ -1,4 +1,4 @@
-# Trivia Game2
+# Trivia Game 2
 A lttle question game that players need to complete in certain amount of time.
 
 ## Motivation
