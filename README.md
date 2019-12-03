@@ -1,16 +1,16 @@
-# TriviaGame2
+# Trivia Game2
 A lttle question game that players need to complete in certain amount of time.
 
-# Motivation
+## Motivation
 Create a game to practice HTML, CSS, Javascript and jQuery language.
 
-# Technologies used and why
-[HTML] is used as backbone of the content.
-[CSS] is used to modify the layout.
-[Javascript] is used to calulate the result and set up timers.
-[jQuery] is used to manipulate the HTML content.
+## Technologies used and why
+**HTML** is used as backbone of the content.
+**CSS** is used to modify the layout.
+**Javascript** is used to calulate the result and set up timers.
+**jQuery** is used to manipulate the HTML content.
 
-# How to use
+## How to use
 1. Once page loaded, timer will start.
 
 2. You have 10 seconds to sumit you answers.
